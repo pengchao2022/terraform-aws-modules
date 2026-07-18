@@ -1,4 +1,4 @@
-## Fuction
+## Function
 
 perform as aws account policy, here you can set the account and password policy
 
