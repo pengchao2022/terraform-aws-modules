@@ -4,6 +4,19 @@ perform as aws account policy, here you can set the account and password policy
 
 ## Usage
 
+### Requirements
+
+| Name | Version |
+|------|---------|
+| terraform | >= 1.5.7 |
+| aws | >= 6.28 |
+
+### Providers
+
+| Name | Version |
+|------|---------|
+| aws | >= 6.28 |
+
 download this module in your lcoal directory and call this module like this:
 
 ```shell
