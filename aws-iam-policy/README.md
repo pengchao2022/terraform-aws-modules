@@ -24,7 +24,7 @@ download this module in your lcoal directory and call this module like this:
 
 ```shell
 module "s3_read_only_policy" {
-  source = "./modules/iam-policy"
+  source = "./modules/aws-iam-policy"
   name   = "gopay-s3-readonly-policy"
   description = "Allow read-only access to gopay buckets"
 

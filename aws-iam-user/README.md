@@ -33,7 +33,7 @@ locals{
 
 
 module "iam_users_developer" {
-  source = "./modules/iam-user"
+  source = "./modules/aws-iam-user"
   for_each = toset(local.developers)
   name     = each.value
   create_access_key = true
