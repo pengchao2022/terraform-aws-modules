@@ -1,6 +1,12 @@
 ## Function
 
-perform as aws public ECR
+perform as aws public ECR 
+
+please be noticed public ECR does not have scan on push option 
+
+but public ECR has alias which private ECR does not have 
+
+when you need to push to public ECR you need this alias
 
 ## Usage
 
@@ -41,4 +47,51 @@ module "gopay_public_ecr" {
 }
 
 ```
+Use aws cli to check the public ECR alias
+
+```shell
+
+allen@192 ~ % aws ecr-public describe-registries --region us-east-1 --output json
+{
+    "registries": [
+        {
+            "registryId": "317429619308",
+            "registryArn": "arn:aws:ecr-public::317429619308:registry/317429619308",
+            "registryUri": "public.ecr.aws/l4w8c3b8",
+            "verified": false,
+            "aliases": [
+                {
+                    "name": "l4w8c3b8", # this is the alias 
+                    "status": "ACTIVE",
+                    "primaryRegistryAlias": true,
+                    "defaultRegistryAlias": true
+                }
+            ]
+        }
+    ]
+}
+
+```
+login to public ECR
+```shell
+
+aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
+
+```
+
+docker build and push image to public ECR using alias
+
+```shell
+
+docker buildx build --platform linux/amd64 \
+  -t public.ecr.aws/l4w8c3b8/gopay-public-api:v2.0.0 \
+  --push .
+
+```
+
+
+
+
+
+
 
