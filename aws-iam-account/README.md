@@ -24,7 +24,7 @@ download this module in your lcoal directory and call this module like this:
 
 ```shell
 module "iam_account" {
-  source = "./modules/iam-account"
+  source = "./modules/aws-iam-account"
 
   account_alias             = "gopay-prod-env"
   minimum_password_length   = 12
