@@ -56,10 +56,10 @@ module "gopay-vpc-dev-endpoint-interface" {
   for_each     = toset(local.endpoint_services)
   environment  = "dev"
   vpc_endpoint_type = "Interface"
-  vpc_id            = module.gopay-service-dev.vpc_id
+  vpc_id            = module.gopay-vpc-dev.vpc_id
   service_name      = "com.amazonaws.${var.region}.${each.value}"
-  subnet_ids          = module.gopay-service-dev.private_subnet_ids
-  security_group_ids  = [module.gopay-service-dev.endpoint_security_group_id]
+  subnet_ids          = module.gopay-vpc-dev.private_subnet_ids
+  security_group_ids  = [module.gopay-vpc-dev.endpoint_security_group_id]
   private_dns_enabled = false
 }
 
