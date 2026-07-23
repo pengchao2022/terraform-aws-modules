@@ -45,3 +45,14 @@ module "maxwell-ec2-iam" {
 
 ```
 
+If you use the EC2 to pull images from ECR for the first time you need to login ECR on that EC2 instance firstly
+
+```shell
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 317429619308.dkr.ecr.us-east-1.amazonaws.com
+
+# then pull the image
+docker pull 317429619308.dkr.ecr.us-east-1.amazonaws.com/gopay-web-frontend:v1.0.0
+
+```
+
+
