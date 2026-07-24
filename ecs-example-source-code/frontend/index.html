@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>GoPay Todo 任务中心</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-pink-100 min-h-screen flex items-center justify-center">
+
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h1 class="text-2xl font-bold text-pink-600 mb-6 text-center">GoPay Todo List</h1>
+        
+        <!-- 搜索框 -->
+        <input type="text" id="searchInput" oninput="filterTodos()" placeholder="搜索任务..." 
+            class="w-full border border-pink-200 rounded-lg px-4 py-2 mb-4 focus:ring-2 focus:ring-pink-400 focus:outline-none">
+
+        <!-- 添加框 -->
+        <div class="flex gap-2 mb-6">
+            <input type="text" id="todoInput" placeholder="输入新任务..." 
+                class="flex-1 border border-pink-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400">
+            <button onclick="addTodo()" class="bg-pink-500 text-white px-4 py-2 rounded-lg hover:bg-pink-600 transition">添加</button>
+        </div>
+
+        <ul id="todoList" class="space-y-2"></ul>
+    </div>
+
+    <script>
+        let allTodos = [];
+
+        window.onload = fetchTodos;
+
+        async function fetchTodos() {
+            const response = await fetch('/api/todos');
+            allTodos = await response.json();
+            renderList(allTodos);
+        }
+
+        function filterTodos() {
+            const keyword = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allTodos.filter(t => t.task.toLowerCase().includes(keyword));
+            renderList(filtered);
+        }
+
+        function toggleEdit(id, currentTask) {
+            const li = document.getElementById(`todo-${id}`);
+            li.innerHTML = `
+                <input type="text" id="edit-${id}" value="${currentTask}" class="border border-pink-300 rounded px-2 flex-1">
+                <button onclick="updateTodo(${id})" class="bg-green-500 text-white px-3 py-1 rounded ml-2 hover:bg-green-600">保存</button>
+            `;
+        }
+
+        async function updateTodo(id) {
+            const newTask = document.getElementById(`edit-${id}`).value;
+            await fetch(`/api/todos/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ task: newTask })
+            });
+            fetchTodos();
+        }
+
+        async function addTodo() {
+            const input = document.getElementById('todoInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            await fetch('/api/todos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ task: text })
+            });
+            input.value = '';
+            fetchTodos();
+        }
+
+        async function deleteTodo(id) {
+            await fetch(`/api/todos/${id}`, { method: 'DELETE' });
+            fetchTodos();
+        }
+
+        function renderList(todos) {
+            const list = document.getElementById('todoList');
+            list.innerHTML = '';
+            todos.forEach(todo => {
+                const li = document.createElement('li');
+                li.id = `todo-${todo.id}`;
+                li.className = "flex justify-between items-center bg-pink-50 p-3 rounded border border-pink-100";
+                li.innerHTML = `
+                    <span class="flex-1">${todo.task}</span>
+                    <button onclick="toggleEdit(${todo.id}, '${todo.task}')" class="text-pink-500 hover:text-pink-700 mr-3">编辑</button>
+                    <button onclick="deleteTodo(${todo.id})" class="text-gray-400 hover:text-red-500">删除</button>
+                `;
+                list.appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>
