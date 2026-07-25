@@ -39,3 +39,7 @@ module "gopay_rds_dev_password" {
 
 ```
 
+here I give the parameter kms_key_id  for decreytion use 
+
+If Iam User or Iam role needs to get the password , this kms key arn will be needed 
+
