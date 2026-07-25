@@ -1,6 +1,10 @@
 ## Function
 
-perform as aws kms key creation, you can use this module to create kms keys
+perform as aws kms key creation, you can use this module to create kms key , then use the kms_key_id for decryption
+
+note:
+
+kms key id is for decrytion , It's not for encryption , since mostly encreption is AWS default action , no need to declare.
 
 ## Usage
 
