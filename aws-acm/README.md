@@ -41,3 +41,18 @@ module "gopay_web_acm" {
 
 ```
 
+If you need to apply one cert for multiple domains , just added the other domain names from here:
+
+```shell
+
+subject_alternative_names = [
+    "*.awsmpc.asia",
+    "mycompany.com",
+    "*.mycompany.com",
+    "example.org"
+  ]
+
+```
+
+
+
