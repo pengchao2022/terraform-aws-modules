@@ -225,7 +225,7 @@ resource "aws_security_group_rule" "nodes_vpc_ingress" {
   from_port         = 0
   to_port           = 65535
   protocol          = "-1"
-  cidr_blocks       = ["0.0.0.0/0"] 
+  cidr_blocks       = [var.vpc_cidr] 
   security_group_id = aws_security_group.nodes.id
   description       = "Allow inbound traffic from entire VPC to fix endpoint/dns rejects"
   depends_on        = [aws_security_group.nodes, aws_security_group.cluster]

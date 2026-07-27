@@ -35,6 +35,7 @@ module "gopay_dev_eks" {
   cluster_version     = "1.35"
 
   vpc_id              = module.gopay_eks_dev_vpc.vpc_id
+  vpc_cidr            = "172.20.0.0/16"
   private_subnet_ids  = module.gopay_eks_dev_vpc.private_subnet_ids
   public_subnet_ids   = module.gopay_eks_dev_vpc.public_subnet_ids
 

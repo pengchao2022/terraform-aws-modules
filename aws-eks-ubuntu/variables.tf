@@ -20,6 +20,11 @@ variable "vpc_id" {
   type        = string
 }
 
+variable "vpc_cidr" {
+  description = "The CIDR of kubernetes VPC"
+  type        = string
+}
+
 variable "public_subnet_ids" {
   type        = list(string)
   description = "A list of public subnet IDs for resources that require public routing"
