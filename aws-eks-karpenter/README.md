@@ -65,13 +65,13 @@ output "eks_cluter_endpoint" {
 
 # this from the karpenter module
 output "karpenter_iam_role_arn" {
-  description = "Karpenter 控制器的 IAM 角色 ARN"
+  description = "Karpenter controller IAM role ARN"
   value       = module.karpenter.iam_role_arn
 }
 
 # also from the karpenter module
 output "karpenter_queue_name" {
-  description = "Karpenter 中断处理 SQS 队列名称"
+  description = "Karpenter interraption SQS queue name"
   value       = module.karpenter.queue_name
 }
 
