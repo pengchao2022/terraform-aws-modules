@@ -20,11 +20,6 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "vpc_cidr" {
-  description = "The CIDR of kubernetes VPC"
-  type        = string
-}
-
 variable "private_subnet_ids" {
   type        = list(string)
   description = "List of private subnet IDs for deploying EKS worker nodes and internal workloads"
