@@ -1,0 +1,14 @@
+# Install karpenter
+helm upgrade --install karpenter oci://public.ecr.aws/karpenter/karpenter \
+  --namespace karpenter \
+  --create-namespace \
+  --version 1.9.0 \
+  --set settings.clusterName=maxwell-eks-dev \
+  --set settings.clusterEndpoint=https://369D6921CD231965CDBA8B2255BEE658.gr7.us-east-1.eks.amazonaws.com \
+  --set settings.interruptionQueue=Karpenter-maxwell-eks-dev \
+  --set-string serviceAccount.annotations."eks\.amazonaws\.com/role-arn"=arn:aws:iam::317429619308:role/KarpenterController-892cb1722e8b277e19cda7ea64 \
+  --wait
+
+
+  # Uninstall karpenter
+  helm uninstall karpenter -n karpenter
