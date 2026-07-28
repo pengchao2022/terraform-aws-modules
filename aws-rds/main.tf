@@ -27,20 +27,40 @@ resource "aws_db_instance" "this" {
 
   tags                = var.tags
 
+  timeouts {
+    create = "20m"
+    update = "20m"
+    delete = "20m"
+  }
 }
 
-# read replicas 
+# use for_each
+# var.replica_count = 3 then ["0", "1", "2"]
+
 resource "aws_db_instance" "replica" {
-  count               = var.replica_count
+  for_each = { for i in range(var.replica_count) : tostring(i) => i }
+
   replicate_source_db = aws_db_instance.this.arn
-  identifier          = "${var.identifier}-replica"
+  identifier          = "${var.identifier}-replica-${each.key}"
   instance_class      = var.instance_class
 
   # read only replicas do not need username and password and storage
   skip_final_snapshot = true
 
   # should use the same vpc as the master db
-  db_subnet_group_name = var.db_subnet_group_name
+  db_subnet_group_name   = var.db_subnet_group_name
   vpc_security_group_ids = var.vpc_security_group_ids
 
+  depends_on = [
+    aws_db_instance.this
+  ]
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  timeouts {
+    create = "20m"
+    delete = "20m"
+  }
 }

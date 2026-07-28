@@ -25,10 +25,10 @@ output "db_instance_arn" {
 
 output "db_replica_endpoints" {
   description = "A list of connection endpoints for all read replicas."
-  value       = aws_db_instance.replica[*].endpoint
+  value       = [for r in aws_db_instance.replica : r.endpoint]
 }
 
 output "db_replica_arns" {
   description = "A list of ARNs for all read replicas."
-  value       = aws_db_instance.replica[*].arn
+  value       = [for r in aws_db_instance.replica : r.arn]
 }
