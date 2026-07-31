@@ -38,7 +38,7 @@ module "maxwell_s3_rest_api_website" {
 
 ```
 
-the website look like:
+the website looks like:
 
 ![mercedes](./demo-site.png)
 
