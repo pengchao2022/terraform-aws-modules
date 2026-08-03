@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: web-frontend-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    # 替换为存放你前面那些 YAML 文件的 Git 仓库地址
+    repoURL: 'https://github.com/pengchao2022/terraform-alicloud-modules.git'
+    targetRevision: HEAD
+    # 替换为你的 YAML 文件在 Git 仓库中的相对路径
+    path: 'web-site-ack-alb-ingress'
+  destination:
+    server: 'https://kubernetes.default.svc' # 部署到当前 EKS 集群
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true     # Git 里删除了文件，集群同步删除
+      selfHeal: true  # 如果有人手动修改了集群，ArgoCD 会自动修正恢复为 Git 中的状态
