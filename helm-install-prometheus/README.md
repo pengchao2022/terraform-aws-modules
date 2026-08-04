@@ -8,6 +8,8 @@ In this demo, I will use argocd to deploy prometheus and grafana on EKS
 
 - Using "基于 Host 的七层 HTTP 路由复用" the grafana and promethes will using one ALB to save money
 
+- Of course If you have a TLS cert you can use "基于 Host 的七层 HTTPS 路由复用" in a production environment
+
 
 ## Usage
 
