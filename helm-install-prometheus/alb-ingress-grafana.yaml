@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: monitoring-alb-ingress
+  namespace: monitoring
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    # 声明 ALB 监听 HTTP 80 端口
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    # 声明 ALB 到后端 Pod 之间使用 HTTP 协议
+    alb.ingress.kubernetes.io/backend-protocol: HTTP
+    # health check
+    alb.ingress.kubernetes.io/healthcheck-port: '3000'
+    alb.ingress.kubernetes.io/healthcheck-path: /api/health
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
+    alb.ingress.kubernetes.io/success-codes: '200'
+    alb.ingress.kubernetes.io/group.name: monitoring-group
+spec:
+  ingressClassName: alb
+  rules:
+    - host: grafana.awsmpc.asia  # your customer domain name
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: prometheus-stack-grafana
+                port:
+                  number: 80
