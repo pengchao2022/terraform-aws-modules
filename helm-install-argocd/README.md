@@ -13,7 +13,7 @@ helm repo update
 
 - Install argocd
 ```shell
-elm upgrade --install argocd argo/argo-cd \
+helm upgrade --install argocd argo/argo-cd \
   --namespace argocd \
   --create-namespace \
   --set server.service.type=ClusterIP
