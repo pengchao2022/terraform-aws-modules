@@ -27,44 +27,57 @@ this module will create eks with amazon linux instance and create eks-self-manag
 
 ```shell
 
-module "gopay_dev_eks" {
+module "maxwell_dev_eks" {
   source = "./modules/aws-eks-amazon-linux"
 
   aws_region          = "us-east-1"
-  cluster_name        = "gopay-eks-dev"
-  cluster_version     = "1.35"
+  cluster_name        = "maxwell-eks-dev"
+  cluster_version     = "1.36"
 
-  vpc_id              = module.gopay_eks_dev_vpc.vpc_id
-  vpc_cidr            = "172.20.0.0/16"
-  private_subnet_ids  = module.gopay_eks_dev_vpc.private_subnet_ids
-  public_subnet_ids   = module.gopay_eks_dev_vpc.public_subnet_ids
+  vpc_id              = module.maxwell_dev_vpc.vpc_id
+  private_subnet_ids  = module.maxwell_dev_vpc.private_subnet_ids
+  public_subnet_ids   = module.maxwell_dev_vpc.public_subnet_ids
 
   cluster_endpoint_private_access = true
   cluster_endpoint_public_access  = true
   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
 
+  vpc_cidr = "172.20.0.0/16"
+
   root_volume_size = 20
-  ami_type         = "AL2023_x86_64_STANDARD"
 
   node_groups = {
-    general-nodes = {
-      desired_size = 4
-      max_size     = 4
-      min_size     = 4
-      instance_types = ["t3.small"]
-      capacity_type  = "ON_DEMAND"
-      labels = { 
-        "node-group" = "general-nodes" 
-      } 
+    general-nodes-v3 = {
+    desired_size   = 2
+    max_size       = 2
+    min_size       = 1
+    instance_types = ["t3.micro"] 
+    ami_type         = "AL2023_x86_64_STANDARD"
+    capacity_type  = "ON_DEMAND"
+    labels = { 
+      "node-group" = "general-nodes-amd-v2" 
+    }
     },
-    "compute-nodes" = {
-      desired_size = 4
-      max_size     = 4
-      min_size     = 4
+    "compute-nodes-arm-v1" = {
+      desired_size   = 2
+      max_size       = 2
+      min_size       = 1
+      instance_types = ["t4g.small"] 
+      capacity_type  = "SPOT"
+      ami_type       = "AL2023_ARM_64_STANDARD" 
+      labels = { 
+        "node-group" = "compute-nodes-arm-v1" 
+      }          
+    },
+    "compute-nodes-v3" = {
+      desired_size = 2
+      max_size     = 2
+      min_size     = 1
       instance_types = ["t3.small"] 
+      ami_type         = "AL2023_x86_64_STANDARD"
       capacity_type  = "SPOT"
       labels = { 
-        "node-group" = "compute-nodes" 
+        "node-group" = "compute-nodes-amd-v2" 
       }          
     }
   }
@@ -74,7 +87,7 @@ module "gopay_dev_eks" {
   
   tags = {
     Environment = "dev"
-    Project     = "gopay-service"
+    Project     = "maxwell-service"
     Terraform   = "true"
   }
 
@@ -83,5 +96,16 @@ module "gopay_dev_eks" {
 }
 
 ```
+Here I use two different ami_type 
+
+- "AL2023_x86_64_STANDARD"  for linux amd 
+
+- "AL2023_ARM_64_STANDARD"  for linux arm 
+
+amd or x86_64 is CISC 复杂指令集 CPU 代表作 Intel, AMD 系列
+
+arm is RISC 精简指令集 CPU 代表作 Apple M 系列 
+
+
 
 
