@@ -229,6 +229,27 @@ helm upgrade --install aws-load-balancer-controller eks/aws-load-balancer-contro
 
 ```
 
+Or you can use json format to install alb controller
+
+```shell
+
+helm upgrade --install aws-load-balancer-controller eks/aws-load-balancer-controller \
+  -n kube-system \
+  --version 3.4.2 \
+  --set clusterName=maxwell-eks-dev \
+  --set serviceAccount.create=true \
+  --set serviceAccount.name=aws-load-balancer-controller \
+  --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"="arn:aws:iam::317429619308:role/aws-load-balancer-controller-role" \
+  --set enableShield=false \
+  --set region=us-east-1 \
+  --set vpcId=vpc-0d46942f993e02668 \
+  --set nodeSelector."node-group"=system-infra \
+  --set-json 'tolerations=[{"key":"node-role","operator":"Equal","value":"infrastructure","effect":"NoSchedule"}]'
+
+  ```
+
+  
+
 
 
 
