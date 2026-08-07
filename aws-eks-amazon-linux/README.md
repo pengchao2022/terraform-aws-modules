@@ -210,6 +210,7 @@ module "maxwell_dev_eks" {
 - Fox example, If you need to install alb ingress controller on system infra , then run the following command
 
 ```shell
+
 helm upgrade --install aws-load-balancer-controller eks/aws-load-balancer-controller \
   -n kube-system \
   --version 3.4.2 \
@@ -221,10 +222,10 @@ helm upgrade --install aws-load-balancer-controller eks/aws-load-balancer-contro
   --set region=us-east-1 \
   --set vpcId=vpc-0d46942f993e02668 \
   --set nodeSelector."node-group"=system-infra \
-  --set tolerations[0].key="node-role" \
-  --set tolerations[0].operator="Equal" \
-  --set tolerations[0].value="infrastructure" \
-  --set tolerations[0].effect="NoSchedule"
+  --set 'tolerations[0].key=node-role' \
+  --set 'tolerations[0].operator=Equal' \
+  --set 'tolerations[0].value=infrastructure' \
+  --set 'tolerations[0].effect=NoSchedule'
 
 ```
 
