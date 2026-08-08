@@ -108,8 +108,8 @@ resource "aws_route_table_association" "public" {
 # attach private subnets with private route table
 resource "aws_route_table_association" "private" {
   count          = var.nat_gateway_count > 0 ? length(var.private_subnets_cidr) : 0
-  subnet_id      = aws_subnet.private[count.index].id
-  route_table_id = aws_route_table.private[count.index % var.nat_gateway_count].id
+  subnet_id      = aws_subnet.private[count.index].id 
+  route_table_id = aws_route_table.private[count.index % var.nat_gateway_count].id # 任何整数除以 1 余数都是 0）
 }
 
 # create sg for vpc endpoint
