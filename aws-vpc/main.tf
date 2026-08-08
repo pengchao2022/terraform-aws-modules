@@ -16,39 +16,38 @@ resource "aws_vpc" "main" {
   cidr_block           = var.vpc_cidr
   enable_dns_hostnames = true
   enable_dns_support   = true
-  tags                 = { Name = "${local.resource_prefix}-vpc"}
+  tags                 = { Name = "${local.resource_prefix}-vpc" }
 }
 
 resource "aws_internet_gateway" "igw" {
-  vpc_id               = aws_vpc.main.id
-  tags                 = { Name = "${local.resource_prefix}-igw"} 
+  vpc_id = aws_vpc.main.id
+  tags   = { Name = "${local.resource_prefix}-igw" }
 }
 
 resource "aws_subnet" "public" {
-  count                = length(var.public_subnets_cidr)
-  vpc_id               = aws_vpc.main.id
-  cidr_block           = var.public_subnets_cidr[count.index]
-  availability_zone    = data.aws_availability_zones.available.names[count.index % length(data.aws_availability_zones.available.names)]
+  count                   = length(var.public_subnets_cidr)
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = var.public_subnets_cidr[count.index]
+  availability_zone       = data.aws_availability_zones.available.names[count.index % length(data.aws_availability_zones.available.names)]
   map_public_ip_on_launch = true
-  
+
   tags = merge(
     { Name = "${local.resource_prefix}-public-${count.index + 1}" },
-    local.common_tags,      
-    var.public_subnet_tags  
+    local.common_tags,
+    var.public_subnet_tags
   )
 }
 
-
 resource "aws_subnet" "private" {
-  count                = length(var.private_subnets_cidr)
-  vpc_id               = aws_vpc.main.id
-  cidr_block           = var.private_subnets_cidr[count.index]
-  availability_zone    = data.aws_availability_zones.available.names[count.index % length(data.aws_availability_zones.available.names)]
+  count             = length(var.private_subnets_cidr)
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.private_subnets_cidr[count.index]
+  availability_zone = data.aws_availability_zones.available.names[count.index % length(data.aws_availability_zones.available.names)]
 
   tags = merge(
-    { Name = "${local.resource_prefix}-private-${count.index + 1}"},
-    local.common_tags,      
-    var.private_subnet_tags 
+    { Name = "${local.resource_prefix}-private-${count.index + 1}" },
+    local.common_tags,
+    var.private_subnet_tags
   )
 }
 
@@ -67,8 +66,8 @@ resource "aws_nat_gateway" "nat" {
   count         = var.nat_gateway_count
   allocation_id = aws_eip.nat[count.index].id
   subnet_id     = aws_subnet.public[count.index].id
-  depends_on    = [ aws_internet_gateway.igw ]
-  tags          = {
+  depends_on    = [aws_internet_gateway.igw]
+  tags = {
     Name        = "${local.resource_prefix}-nat-${count.index + 1}"
     Environment = var.environment
     Project     = var.project_name
@@ -100,18 +99,17 @@ resource "aws_route" "private_nat" {
   nat_gateway_id         = aws_nat_gateway.nat[count.index].id
 }
 
-
 resource "aws_route_table_association" "public" {
   count          = length(var.public_subnets_cidr)
   subnet_id      = aws_subnet.public[count.index].id
   route_table_id = aws_route_table.public.id
 }
 
-
+# attach private subnets with private route table
 resource "aws_route_table_association" "private" {
-  count          = length(var.private_subnets_cidr)
+  count          = var.nat_gateway_count > 0 ? length(var.private_subnets_cidr) : 0
   subnet_id      = aws_subnet.private[count.index].id
-  route_table_id = aws_route_table.private[count.index].id
+  route_table_id = aws_route_table.private[count.index % var.nat_gateway_count].id
 }
 
 # create sg for vpc endpoint
@@ -125,19 +123,18 @@ resource "aws_security_group" "endpoint_sg" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = [ var.vpc_cidr ] 
+    cidr_blocks = [var.vpc_cidr]
   }
 
   egress {
     from_port   = 0
     to_port     = 0
-    protocol    = -1
-    cidr_blocks = [ "0.0.0.0/0" ]
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = { Name = "${var.project_name}-endpoint-sg"}
+  tags = { Name = "${var.project_name}-endpoint-sg" }
 }
-
 
 # CloudWatch VPC Flow Logs
 # create CloudWatch Log Group
