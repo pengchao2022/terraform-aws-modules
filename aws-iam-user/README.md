@@ -54,4 +54,46 @@ module "iam_users_etw" {
 }
 
 ```
+root directory outputs.tf
+
+```shell
+output "all_iam_users" {
+  description = "All created IAM users"
+  value = concat(
+    [for user in module.iam_users_admin : user.user_name],
+    [for user in module.iam_users_developer : user.user_name],
+    [for user in module.iam_users_etw : user.user_name]
+  )
+}
+
+output "user_credentials" {
+  description = "All credentials for all IAM users"
+  sensitive   = true
+  value = {
+    for k, v in merge(
+      module.iam_users_admin,
+      module.iam_users_developer,
+      module.iam_users_etw
+    ) : k => {
+      password          = v.password
+      access_key_id     = v.access_key_id
+      secret_access_key = v.secret_access_key
+    }
+  }
+}
+
+```
+check the credentials
+
+```shell
+terraform output -json user_credentials
+
+```
+
+output to json file
+```shell
+terraform output -json user_credentials > credentials.json
+
+```
+
 
