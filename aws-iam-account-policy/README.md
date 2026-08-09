@@ -23,14 +23,20 @@ perform as aws account policy, here you can set the account and password policy
 download this module in your lcoal directory and call this module like this:
 
 ```shell
-module "iam_account" {
-  source = "./modules/aws-iam-account"
+module "iam_account_policy" {
+  source = "./modules/aws-iam-account-policy"
 
-  account_alias             = "gopay-prod-env"
+  account_alias             = "maxwell-company"
   minimum_password_length   = 12
   max_password_age          = 90
   password_reuse_prevention = 5 
 }
+
+```
+check the current password policy
+
+```shell
+aws iam get-account-password-policy
 
 ```
 
