@@ -37,9 +37,7 @@ download this module in your lcoal directory and call this module like this:
 
 module "gopay_eks_dev_vpc" {
   source = "./modules/aws-vpc"
-  providers = {
-    aws = aws.east
-  }
+  
   environment = "dev"
   vpc_cidr = "172.16.0.0/16"
   project_name = "gopay-service-eks"
