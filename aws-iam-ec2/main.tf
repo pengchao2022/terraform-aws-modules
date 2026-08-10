@@ -1,4 +1,5 @@
 # define trust policy assume role
+
 resource "aws_iam_role" "ec2_s3_role" {
   name = "${var.project_name}-ec2-s3-role"
   assume_role_policy = jsonencode({
@@ -11,7 +12,11 @@ resource "aws_iam_role" "ec2_s3_role" {
   }) 
 }
 
-# s3 readonly access
+# s3 readonly access inline policy
+# 在 Terraform 中，只要你使用了 aws_iam_role_policy 这个资源类型
+# 创建出来的就是 Inline Policy（内联策略）
+# 内联策略，死绑定，不可复用
+# 它只属于这一个 Role。如果这个 Role 被删除了，属于它的 Inline Policy 会自动被一并删除。
 resource "aws_iam_role_policy" "s3_access" {
   name    = "s3-access-policy"
   role    = aws_iam_role.ec2_s3_role.id
@@ -42,6 +47,7 @@ resource "aws_iam_role_policy_attachment" "ecr_readonly_attach" {
   policy_arn  = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
 
+# inline policy 
 resource "aws_iam_role_policy" "ssm_read_policy" {
   name = "allow-read-cw-ssm-config"
   role = aws_iam_role.ec2_s3_role.id 

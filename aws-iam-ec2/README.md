@@ -55,4 +55,10 @@ docker pull 317429619308.dkr.ecr.us-east-1.amazonaws.com/gopay-web-frontend:v1.0
 
 ```
 
+cloudwatchagent policy arn:
+
+CloudWatchAgentServerPolicy
+
+
+
 
