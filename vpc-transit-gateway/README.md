@@ -1,6 +1,6 @@
 ## Function
 
-perform as aws two VPC transmit gateway connection, By transmit gateway the two VPC can communicate with each other
+perform as aws two VPC transit gateway connection, By transit gateway the two VPC can communicate with each other
 
 ## Usage
 
