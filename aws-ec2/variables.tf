@@ -39,7 +39,7 @@ variable "instance_suffix" {
 }
 
 variable "public_key_content" {
-  description = "id_rsa.pub的内容"
+  description = "id_rsa.pub content"
   type        = string
   
 }

@@ -71,3 +71,17 @@ Please put the scripts directory to you root folder where you will call this mod
 
 ```
 
+Get the ssh key id_rsa.pub command
+```shell
+cat ~/.ssh/id_rsa.pub
+
+```
+Get the instance profile using aws cli
+```shell
+aws iam list-instance-profiles
+
+```
+
+
+
+
