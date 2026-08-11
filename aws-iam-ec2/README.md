@@ -59,6 +59,13 @@ cloudwatchagent policy arn:
 
 CloudWatchAgentServerPolicy
 
+You can use this aws cli command to check the instance profile created by terraform:
+
+```shell
+aws iam list-instance-profiles
+
+```
+
 
 
 

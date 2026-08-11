@@ -19,7 +19,7 @@ resource "aws_iam_role" "ec2_s3_role" {
 # 它只属于这一个 Role。如果这个 Role 被删除了，属于它的 Inline Policy 会自动被一并删除。
 resource "aws_iam_role_policy" "s3_access" {
   name    = "s3-access-policy"
-  role    = aws_iam_role.ec2_s3_role.id
+  role    = aws_iam_role.ec2_s3_role.name
   policy  = jsonencode({
     Version = "2012-10-17"
     Statement = [{
