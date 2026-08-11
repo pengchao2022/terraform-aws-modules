@@ -1,26 +1,31 @@
-# define trust policy assume role
+# 动态获取当前的 AWS Account ID 和 Region，避免硬编码 arn:aws:ssm:region:account-id
+data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
 
+# 创建 IAM Role (移除了冲突的 name，改用 name_prefix 或包含 environment 的 name)
 resource "aws_iam_role" "ec2_s3_role" {
-  name = "${var.project_name}-ec2-s3-role"
+  name_prefix = "${var.project_name}-${var.environment}-ec2-s3-role-"
+  
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
       Action    = "sts:AssumeRole"
       Effect    = "Allow"
-      Principal = {Service = "ec2.amazonaws.com"}
+      Principal = { Service = "ec2.amazonaws.com" }
     }]
-  }) 
+  })
+
+  tags = {
+    Environment = var.environment
+    Project     = var.project_name
+  }
 }
 
-# s3 readonly access inline policy
-# 在 Terraform 中，只要你使用了 aws_iam_role_policy 这个资源类型
-# 创建出来的就是 Inline Policy（内联策略）
-# 内联策略，死绑定，不可复用
-# 它只属于这一个 Role。如果这个 Role 被删除了，属于它的 Inline Policy 会自动被一并删除。
-resource "aws_iam_role_policy" "s3_access" {
-  name    = "s3-access-policy"
-  role    = aws_iam_role.ec2_s3_role.name
-  policy  = jsonencode({
+# S3 权限 (推荐使用独立 Policy + Attachment，方便依赖清理)
+resource "aws_iam_policy" "s3_access" {
+  name_prefix = "${var.project_name}-${var.environment}-s3-access-"
+  
+  policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
       Action = ["s3:GetObject", "s3:ListBucket", "s3:PutObject"]
@@ -35,35 +40,43 @@ resource "aws_iam_role_policy" "s3_access" {
   })
 }
 
-# cloudwatch agent to get collect logs 
-resource "aws_iam_role_policy_attachment" "cloudwatch_agent_attch" {
-  role        = aws_iam_role.ec2_s3_role.name
-  policy_arn  = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+resource "aws_iam_role_policy_attachment" "s3_access_attach" {
+  role       = aws_iam_role.ec2_s3_role.name
+  policy_arn = aws_iam_policy.s3_access.arn
 }
 
-# allow ec2 to read only aws ecr
-resource "aws_iam_role_policy_attachment" "ecr_readonly_attach" {
-  role        = aws_iam_role.ec2_s3_role.name
-  policy_arn  = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-}
-
-# inline policy 
-resource "aws_iam_role_policy" "ssm_read_policy" {
-  name = "allow-read-cw-ssm-config"
-  role = aws_iam_role.ec2_s3_role.id 
+# SSM Read 权限 (使用动态 data 获取真实的 account_id 和 region)
+resource "aws_iam_policy" "ssm_read_policy" {
+  name_prefix = "${var.project_name}-${var.environment}-ssm-cw-"
 
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
       Action   = ["ssm:GetParameter"]
       Effect   = "Allow"
-      Resource = "arn:aws:ssm:region:account-id:parameter/cw-agent/*" # 匹配你的路径
+      Resource = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/cw-agent/*"
     }]
   })
 }
 
-# create Instance Profile for ec2
+resource "aws_iam_role_policy_attachment" "ssm_read_attach" {
+  role       = aws_iam_role.ec2_s3_role.name
+  policy_arn = aws_iam_policy.ssm_read_policy.arn
+}
+
+# 托管策略绑定 (CloudWatch & ECR)
+resource "aws_iam_role_policy_attachment" "cloudwatch_agent_attach" {
+  role       = aws_iam_role.ec2_s3_role.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "ecr_readonly_attach" {
+  role       = aws_iam_role.ec2_s3_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+
+# Instance Profile (name_prefix，解决多环境/多实例冲突)
 resource "aws_iam_instance_profile" "this" {
-  name      = "${var.project_name}-instance-profile"
-  role      = aws_iam_role.ec2_s3_role.name
+  name_prefix = "${var.project_name}-${var.environment}-instance-profile-"
+  role        = aws_iam_role.ec2_s3_role.name
 }

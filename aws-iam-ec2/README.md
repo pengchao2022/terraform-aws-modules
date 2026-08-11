@@ -33,14 +33,27 @@ download this module in your lcoal directory and call this module like this:
 
 
 ```shell
+# Dev 
+module "maxwell_ec2_iam_role_dev" {
+  source       = "./modules/aws-iam-ec2"
+  
+  project_name = "maxwell-web-app"
+  environment  = "dev" 
+  bucket_names = [
+    "maxwell-kite-dev-2026",
+    "maxwell-logs-dev-2026"
+  ]
+}
 
-module "maxwell-ec2-iam" {
-  source = "./modules/aws-iam-ec2"
-  project_name = "gopay-service"
-  bucket_names = [ 
-    module.gopay-s3.bucket_name,
-    module.maxwell-s3.bucket_name
-   ]
+# Prod 
+module "maxwell_ec2_iam_role_prod" {
+  source       = "./modules/aws-iam-ec2"
+  
+  project_name = "maxwell-web-app"
+  environment  = "prod" 
+  bucket_names = [
+    "maxwell-kite-2026520"
+  ]
 }
 
 ```
