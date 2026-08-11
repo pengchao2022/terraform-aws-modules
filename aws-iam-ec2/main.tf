@@ -54,7 +54,7 @@ resource "aws_iam_policy" "ssm_read_policy" {
     Statement = [{
       Action   = ["ssm:GetParameter"]
       Effect   = "Allow"
-      Resource = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/cw-agent/*"
+      Resource = "arn:aws:ssm:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:parameter/cw-agent/*"
     }]
   })
 }

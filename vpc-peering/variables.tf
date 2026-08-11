@@ -1,16 +1,16 @@
 variable "name" {
-    description = "The name for resource tags use"
-    type        = string 
+  description = "The name prefix for resource tags"
+  type        = string
 }
 
 variable "requester_vpc_id" {
   description = "The id of request VPC"
-  type        = string 
+  type        = string
 }
 
 variable "accepter_vpc_id" {
   description = "The id of accept VPC"
-  type        = string  
+  type        = string
 }
 
 variable "requester_vpc_cidr" {
@@ -24,7 +24,7 @@ variable "accepter_vpc_cidr" {
 }
 
 variable "accepter_region" {
-  description = "The AWS region of accept VPC"
+  description = "The AWS region of accept VPC (Mandatory)"
   type        = string
 }
 
@@ -35,5 +35,11 @@ variable "requester_route_table_ids" {
 
 variable "accepter_route_table_ids" {
   description = "All the private route tables of accept VPC"
-  type        = list(string) 
+  type        = list(string)
+}
+
+variable "tags" {
+  description = "A map of tags to add to all resources"
+  type        = map(string)
+  default     = {}
 }
