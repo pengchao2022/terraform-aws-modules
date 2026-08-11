@@ -35,8 +35,6 @@ Please put the scripts directory to you root folder where you will call this mod
 
   public_ip_instances = ["jump-server-1"]
 
-  vpc_id       = module.gopay-service-dev.vpc_id
-
   subnet_map = {
     jump-server-1 = module.gopay-service-dev.public_subnet_ids[0]
     web-1         = module.gopay-service-dev.private_subnet_ids[0]
