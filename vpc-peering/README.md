@@ -46,6 +46,9 @@ module "gopay-vpc-peering-prod-to-dev" {
   )
 
   accepter_region          = "us-east-1"
+  tags = {
+    Terraform = "true"
+  }
 }
 ```
 If you don't have other modules you want to combine route tables directly using like this:
@@ -79,6 +82,9 @@ module "maxwell-vpc-peering-prod-to-dev" {
   ]
 
   accepter_region          = "us-east-1"
+  tags = {
+    Terraform = "true"
+  }
 }
 ```
 The aws cli command to get all the route tables in one VPC using like this:
