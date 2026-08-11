@@ -24,7 +24,7 @@ download this module in your lcoal directory and call this module like this:
 
 ```shell
 
-module "vpc_transmit_gateway" {
+module "vpc_transit_gateway" {
   source = "./modules/vpc-transmit-gateway"
 
   name   = "maxwell-global"
@@ -69,7 +69,7 @@ If you don't have other vpc modules and you can also input parameters directly l
 ```shell
 
 
-module "vpc_transmit_gateway" {
+module "vpc_transit_gateway" {
   source = "./modules/vpc-transmit-gateway"
 
   name   = "maxwell-global"
