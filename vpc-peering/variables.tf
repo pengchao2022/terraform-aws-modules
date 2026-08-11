@@ -29,12 +29,12 @@ variable "accepter_region" {
 }
 
 variable "requester_route_table_ids" {
-  description = "All the private route tables of request VPC"
+  description = "All the route tables of request VPC"
   type        = list(string)
 }
 
 variable "accepter_route_table_ids" {
-  description = "All the private route tables of accept VPC"
+  description = "All the route tables of accept VPC"
   type        = list(string)
 }
 
