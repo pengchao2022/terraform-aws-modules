@@ -43,3 +43,22 @@ module "gopay_eks_prod_endpoint_gateway" {
 
 ```
 
+If you just use for s3 and you can input the parameters directly
+
+```shell
+
+module "maxwell_dev_vpc_endpoint_gateway" {
+  source   = "./modules/vpc-endpoint-gateway"
+
+  region          = "us-east-1"
+  service_name    = "s3"
+  environment     = "prod"
+  vpc_id          = module.maxwell_dev_vpc.vpc_id
+  route_table_ids = ["rtb-0e34f1049f0be8395"]
+}
+
+```
+
+
+
+
