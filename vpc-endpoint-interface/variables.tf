@@ -31,3 +31,18 @@ variable "private_dns_enabled" {
   type        = bool
   default     = true
 }
+
+variable "dns_options" {
+  description = "DNS options for the endpoint will provide private IP (Only for S3/DynamoDB inbound resolver restriction), Other servers do not need this option"
+  type = object({
+    dns_record_ip_type                            = optional(string)
+    private_dns_only_for_inbound_resolver_endpoint = optional(bool)
+  })
+  default = null
+}
+
+variable "tags" {
+  description = "A map of tags to add to all resources"
+  type        = map(string)
+  default     = {}
+}

@@ -65,4 +65,36 @@ module "gopay-vpc-dev-endpoint-interface" {
 
 ```
 
+If you only want to create interface for s3 service and want the dns resolve private IP:
+
+```shell
+
+
+module "maxwell_dev_vpc_endpoint_interface" {
+  source = "./modules/vpc-endpoint-interface"
+
+  environment         = "dev"
+  vpc_id              = module.maxwell_dev_vpc.vpc_id
+  service_name        = "com.amazonaws.${var.region}.s3"
+  subnet_ids          = module.maxwell_dev_vpc.private_subnet_ids
+  security_group_ids  = [module.maxwell_dev_vpc.endpoint_security_group_id]
+  private_dns_enabled = true
+  dns_options = {
+    private_dns_only_for_inbound_resolver_endpoint = false
+    dns_record_ip_type                             = null # ipv4 by default
+  }
+  depends_on          = [ module.maxwell_dev_vpc_endpoint_gateway ]
+}
+
+```
+
+Check the DNS resolve bucket url whether a private IP
+
+```shell
+
+dig maxwell-kite-2026520.s3.us-east-1.amazonaws.com
+
+```
+
+
 

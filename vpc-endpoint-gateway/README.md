@@ -59,6 +59,16 @@ module "maxwell_dev_vpc_endpoint_gateway" {
 
 ```
 
+Check the DNS whether resolve a private IP
+
+```shell
+
+dig maxwell-kite-2026520.s3.us-east-1.amazonaws.com
+
+```
+
+
+
 
 
 
