@@ -12,3 +12,8 @@ output "vpc_attachment_ids" {
   description = "Map of VPC attachment IDs"
   value       = { for k, v in aws_ec2_transit_gateway_vpc_attachment.this : k => v.id }
 }
+
+output "transit_gateway_route_table_id" {
+  description = "Default transit gateway route table ID"
+  value       = aws_ec2_transit_gateway.this.association_default_route_table_id
+}

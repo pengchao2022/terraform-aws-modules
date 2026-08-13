@@ -25,7 +25,7 @@ download this module in your lcoal directory and call this module like this:
 ```shell
 
 module "vpc_transit_gateway" {
-  source = "./modules/vpc-transmit-gateway"
+  source = "./modules/vpc-transit-gateway"
 
   name   = "maxwell-global"
 
@@ -40,9 +40,11 @@ module "vpc_transit_gateway" {
         module.maxwell_dev_vpc.public_route_table_ids,
         module.maxwell_dev_vpc.private_route_table_ids
       )
-      destination_cidr = "10.20.0.0/16"
+      destination_cidrs = [
+        "10.20.0.0/16",
+        "10.50.0.0/16"
+      ]
     },
-
     maxwell_prod_vpc = {
       vpc_id = module.maxwell_prod_vpc.vpc_id
       subnet_ids = module.maxwell_prod_vpc.private_subnet_ids 
@@ -51,17 +53,30 @@ module "vpc_transit_gateway" {
         module.maxwell_prod_vpc.public_route_table_ids,
         module.maxwell_prod_vpc.private_route_table_ids
       )
-      destination_cidr = "172.20.0.0/16"
-    }
+      destination_cidrs = [
+        "172.20.0.0/16",
+        "10.50.0.0/16"
+      ]
+    },
+    maxwell_int_vpc = {
+      vpc_id = module.maxwell_int_vpc.vpc_id
+      subnet_ids = module.maxwell_int_vpc.private_subnet_ids
 
+      route_table_ids = concat(
+        module.maxwell_int_vpc.public_route_table_ids,
+        module.maxwell_int_vpc.private_route_table_ids
+      )
+      destination_cidrs = [
+        "172.20.0.0/16",
+        "10.20.0.0/16"
+      ]
+    }
   }
   tags = {
     Environment = "prod"
     Terraform   = "true"
-  }
-  
+  } 
 }
-
 
 ```
 If you don't have other vpc modules and you can also input parameters directly like this:

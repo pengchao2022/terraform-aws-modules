@@ -15,7 +15,7 @@ variable "vpc_attachments" {
     vpc_id             = string
     subnet_ids         = list(string)
     route_table_ids    = list(string) # 需要添加 TGW 路由的子网路由表 ID 列表
-    destination_cidr   = string       # 访问对方 VPC 的 CIDR 网段
+    destination_cidrs   = list(string)       # 访问对方 VPC 的 CIDR 网段
   }))
   default = {}
 }
