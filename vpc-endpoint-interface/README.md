@@ -96,5 +96,9 @@ dig maxwell-kite-2026520.s3.us-east-1.amazonaws.com
 
 ```
 
+If in China， S3 bucket URL is:
+
+https://maxwell-kite.s3.cn-north-1.amazonaws.com.cn
+
 
 
