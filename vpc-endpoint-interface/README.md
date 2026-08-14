@@ -72,18 +72,27 @@ If you only want to create interface for s3 service and want the dns resolve pri
 
 module "maxwell_dev_vpc_endpoint_interface" {
   source = "./modules/vpc-endpoint-interface"
-
-  environment         = "dev"
-  vpc_id              = module.maxwell_dev_vpc.vpc_id
-  service_name        = "com.amazonaws.${var.region}.s3"
-  subnet_ids          = module.maxwell_dev_vpc.private_subnet_ids
-  security_group_ids  = [module.maxwell_dev_vpc.endpoint_security_group_id]
+  vpc_id = "vpc-05d503abcd8268187"
+  environment = "dev"
+  service_name = "s3"
+  region = "us-east-1"
+  subnet_ids = [
+    "subnet-056267a6e81fc6faa",
+    "subnet-0d25e5e7ef76dd2a6",
+    "subnet-01fb96adad85d21fc"
+  ]
+  security_group_ids = [ "sg-0a1d0645a4a7a38ed" ]
   private_dns_enabled = true
   dns_options = {
-    private_dns_only_for_inbound_resolver_endpoint = false
-    dns_record_ip_type                             = null # ipv4 by default
+    dns_reocrd_ip_type = null
+    private_dns_only_for_inbound_resolver_endpoint = false 
   }
-  depends_on          = [ module.maxwell_dev_vpc_endpoint_gateway ]
+
+  tags = {
+    ManagedbyTerrafrom = "true"
+  }
+  depends_on = [ module.maxwell_dev_vpc_endpoint_gateway ]
+  
 }
 
 ```
