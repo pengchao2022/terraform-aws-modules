@@ -101,4 +101,9 @@ If in China， S3 bucket URL is:
 https://maxwell-kite.s3.cn-north-1.amazonaws.com.cn
 
 
+private_dns_only_for_inbound_resolver_endpoint = false 
+取消对入站解析器的专属限制，让该 VPC 终端节点的私有 DNS 对整个 VPC 内部的所有资源（以及配置了相应 DNS 转发的本地网络）全面开放。
+当你开启 private_dns_enabled = true 时，AWS 会自动在你的 VPC 内部创建一个私有托管区（Private Hosted Zone），让 VPC 内的 EC2 实例在访问服务（如 S3、SQS）时，能够通过默认的 AWS DNS（169.254.16.2）直接解析到该接口终端节点的私有 IP 上。
+
+
 
