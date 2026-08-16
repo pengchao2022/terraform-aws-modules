@@ -1,9 +1,9 @@
-# 1. 引用现有的 S3 Bucket
+# 引用现有的 S3 Bucket
 data "aws_s3_bucket" "existing_bucket" {
   bucket = var.bucket_name
 }
 
-# 2. 为传入的每个用户单独生成一份 IAM 策略
+# 为传入的每个用户单独生成一份 IAM 策略
 # 我们用一个 local map 把 ARN 映射成 { user_name = user_arn } 的结构，方便循环
 locals {
   user_map = {
@@ -54,7 +54,7 @@ resource "aws_iam_policy" "bucket_access_policy" {
   })
 }
 
-# 3. 将各自的策略附加给对应的 IAM 用户
+# 将各自的策略附加给对应的 IAM 用户
 resource "aws_iam_user_policy_attachment" "attach_to_users" {
   for_each = local.user_map
 
