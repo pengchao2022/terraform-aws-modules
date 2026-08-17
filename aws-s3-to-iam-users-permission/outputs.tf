@@ -1,6 +1,6 @@
-output "policy_arns" {
-  description = "Map of user names to their respective created policy ARNs"
-  value       = { for k, policy in aws_iam_policy.bucket_access_policy : k => policy.arn }
+output "policy_arn" {
+  description = "The ARN of the shared S3 access policy"
+  value       = aws_iam_policy.bucket_access_policy.arn
 }
 
 output "bucket_arn" {
