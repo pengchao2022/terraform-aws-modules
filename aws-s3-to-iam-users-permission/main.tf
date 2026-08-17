@@ -13,8 +13,7 @@ locals {
 }
 
 resource "aws_iam_policy" "bucket_access_policy" {
-  for_each = local.user_map
-
+  
   # 使用 name_prefix 代替固定的 name
   # AWS 会自动在后面拼上随机字符，并且会智能裁剪以严格保证总长度不超过 64 个字符的限制
   name_prefix = "S3Access-"
