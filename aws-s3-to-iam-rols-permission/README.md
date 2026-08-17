@@ -60,7 +60,7 @@ aws s3 cp hello2026.txt s3://maxwell-frontend-007
 
 Create a folder in the S3 bucket
 ```shell
-aws s3api put-object --bucket maxwell-frontend-007 --key new-folder-01
+aws s3api put-object --bucket maxwell-frontend-007 --key new-folder-01/
 
 ```
 
