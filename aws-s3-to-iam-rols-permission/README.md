@@ -4,6 +4,7 @@ perform as aws assign existing S3 access to existing IAM roles
 
 - require existing S3 bucket 
 - multiple existing IAM roles supported
+- multiple IAM roles share one Policy
 
 ## Usage
 
