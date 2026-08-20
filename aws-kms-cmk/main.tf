@@ -24,7 +24,7 @@ data "aws_iam_policy_document" "kms_policy" {
       type        = "Service"
       identifiers = [
         "s3.amazonaws.com",
-        "logs.${data.aws_region.current.name}.amazonaws.com"
+        "logs.${data.aws_region.current.region}.amazonaws.com"
       ]
     }
     actions = [
