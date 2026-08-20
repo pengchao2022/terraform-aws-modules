@@ -8,9 +8,13 @@ variable "environment" {
   type        = string 
 }
 
+variable "vpc_id" {
+  description = "The id of vpc"
+  type        = string  
+}
 
 variable "subnet_map" {
-  description = "The id of subnet mapping"
+  description = "The id of subnet"
   type        = map(string)
 }
 
@@ -25,36 +29,36 @@ variable "instance_type" {
 }
 
 variable "instance_suffix" {
-  description = "The suffix of instance like web-1..."
+  description = "the suffix of instance like web-1..."
   type        = set(string)
   default     = []
 }
 
 variable "public_key_content" {
-  description = "id_rsa.pub content"
+  description = "id_rsa.pub的内容"
   type        = string
 }
 
 variable "existing_security_group_ids" {
-  description = "Exist Security group IDs"
+  description = "exist Security group IDs"
   type        = list(string)
   default     = []
 }
 
 variable "iam_instance_profile" {
-  description = "IAM profile name"
+  description = "IAM profile"
   type        = string
-  default     = null # 告诉 Terraform：如果不传值，就“什么都不传” 那么就是不挂载任何 instance profile
+  default     = "null"
 }
 
 variable "user_data" {
   description = "The shell scripts which run after EC2 started"
   type        = string
-  default     = null # 告诉 Terraform：如果不传值，就“什么都不传” 那么就是不安装任何 自定义软件
+  default     = "null" 
 }
 
 variable "root_volume_size" {
-  description = "The size of root volume (GB)"
+  description = "the size of root volumn"
   type        = number
   default     = 20 
 }
@@ -65,9 +69,27 @@ variable "public_ip_instances" {
   default     = [] 
 }
 
+variable "enable_ebs_volume" {
+  description = "Whether to create and attach an additional EBS volume for data persistence"
+  type        = bool
+  default     = false
+}
+
+variable "ebs_volume_size" {
+  description = "The size of the additional EBS volume in GB"
+  type        = number
+  default     = 30
+}
+
+variable "ebs_device_name" {
+  description = "The device name for the EBS volume attachment (e.g. /dev/xvdf)"
+  type        = string
+  default     = "/dev/xvdf"
+}
+
 
 variable "tags" {
-  description = "Additional tags for all resources"
+  description = "A map of custom tags to add to all resources"
   type        = map(string)
   default     = {}
 }

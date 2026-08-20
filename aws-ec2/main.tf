@@ -2,7 +2,6 @@
 locals {
   name_prefix = "${var.project_name}-${var.environment}"
   
-  # ✅ 已修正：合并默认标签与外部传入的 var.tags
   common_tags = merge(
     {
       Project     = var.project_name
@@ -17,7 +16,7 @@ locals {
 resource "aws_key_pair" "deployer" {
   key_name   = "${local.name_prefix}-key"
   public_key = var.public_key_content
-
+  
   tags = local.common_tags
 }
 
@@ -28,6 +27,7 @@ resource "aws_instance" "web_server" {
   instance_type = var.instance_type
   subnet_id     = var.subnet_map[each.value]
   key_name      = aws_key_pair.deployer.key_name
+  
 
   vpc_security_group_ids = var.existing_security_group_ids
 
@@ -40,8 +40,29 @@ resource "aws_instance" "web_server" {
     volume_type           = "gp3"
     delete_on_termination = true
   }
-
+  
   tags = merge(local.common_tags, {
     Name = "${local.name_prefix}-${each.value}-server"
   })
+}
+
+
+# create EBS volume if needed
+resource "aws_ebs_volume" "data_volume" {
+  for_each          = var.enable_ebs_volume ? var.instance_suffix : []
+  availability_zone = aws_instance.web_server[each.value].availability_zone
+  size              = var.ebs_volume_size
+  type              = "gp3"
+  encrypted         = true
+
+  tags = merge(local.common_tags, {
+    Name = "${local.name_prefix}-${each.value}-data-vol"
+  })
+}
+
+resource "aws_volume_attachment" "data_volume_attach" {
+  for_each    = var.enable_ebs_volume ? var.instance_suffix : []
+  device_name = var.ebs_device_name
+  volume_id   = aws_ebs_volume.data_volume[each.value].id
+  instance_id = aws_instance.web_server[each.value].id
 }
