@@ -32,3 +32,18 @@ module "maxwell_ec2_iam_role_kms_dev" {
 
 ```
 
+For AWS secretsmanager supported
+
+```shell
+
+module "maxwell_ec2_iam_role_with_rabbit_secret" {
+  source = "./modules/aws-iam-ec2-enhanced"
+  project_name = "maxwell-microservices"
+  environment = "dev"
+  secret_arns = [
+    "arn:aws:secretsmanager:us-east-1:317429619308:secret:secret-for-rabbitmq-int-FRCr5D"
+  ]
+}
+
+```
+

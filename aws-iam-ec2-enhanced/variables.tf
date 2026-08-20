@@ -19,3 +19,9 @@ variable "kms_key_arns" {
   description = "Optional list of KMS key ARNs that this EC2 role needs permission to use for encryption and decryption"
   default     = []
 }
+
+variable "secret_arns" {
+  type        = list(string)
+  description = "Optional list of Secrets Manager secret ARNs that this EC2 role is allowed to read (GetSecretValue)"
+  default     = []
+}
