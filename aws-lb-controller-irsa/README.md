@@ -66,3 +66,36 @@ helm upgrade --install aws-load-balancer-controller eks/aws-load-balancer-contro
 
   ```
 
+  If you want to deploy alb-loadbalance on system-infra node group you can call like this:
+
+  ```shell
+
+  helm upgrade --install aws-load-balancer-controller eks/aws-load-balancer-controller \
+  -n kube-system \
+  --version 3.4.2 \
+  --set clusterName=maxwell-eks-dev \
+  --set serviceAccount.create=true \
+  --set serviceAccount.name=aws-load-balancer-controller \
+  --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"="arn:aws:iam::317429619308:role/aws-load-balancer-controller-role-maxwell" \
+  --set enableShield=false \
+  --set region=us-east-1 \
+  --set vpcId=vpc-06441138f85f43fc9 \
+  --set nodeSelector."node-group"="system-infra" \
+  --set 'tolerations[0].key=node-role' \
+  --set 'tolerations[0].operator=Equal' \
+  --set 'tolerations[0].value=infrastructure' \
+  --set 'tolerations[0].effect=NoSchedule'
+
+  ```
+  And you can use this command to check all the pods running on which node group:
+
+  ```shell
+
+  kubectl get pods -n kube-system -o custom-columns=NAME:.metadata.name,NODE:.spec.nodeName --no-headers | \
+while read pod node; do \
+  group=$(kubectl get node $node -o jsonpath='{.metadata.labels.eks\.amazonaws\.com/nodegroup}'); \
+  echo "$pod Running on $group"; \
+done
+
+```
+

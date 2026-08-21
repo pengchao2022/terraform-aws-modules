@@ -83,4 +83,23 @@ module "gopay_prod_eks" {
 
 ```
 
+Check the pods running on which node-group
+
+```shell
+kubectl get pods -n kube-system -o custom-columns=NAME:.metadata.name,NODE:.spec.nodeName --no-headers | \
+while read pod node; do \
+  group=$(kubectl get node $node -o jsonpath='{.metadata.labels.eks\.amazonaws\.com/nodegroup}'); \
+  echo "$pod Running on $group"; \
+done
+
+```
+For the metric server installation you can run:
+
+```shell
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+```
+Or just apply the metricserver.yaml locally
+
+
+
 
