@@ -27,18 +27,27 @@ download this module in your lcoal directory and call this module like this:
 # define OIDC trust policy
 data "aws_iam_policy_document" "github_oidc_assume" {
   statement {
-    actions = [ "sts:AssumeRoleWithWebIdentity" ]
+    actions = ["sts:AssumeRoleWithWebIdentity"]
     principals {
       type        = "Federated"
-      identifiers = [ module.github_oidc.arn ]   # call the arn created by module github oidc provider
+      identifiers = [module.github_oidc.arn]
     }
 
     condition {
-      test      = "StringLike"
-      variable  = "token.actions.githubusercontent.com:sub"
-      values    = ["repo:pengchao2022/*"]
-      # if you wnat to set only main branch can call AWS API to deploy resources
-      # values   = ["repo:pengchao2022/*:ref:refs/heads/main"]
+      test     = "StringLike"
+      variable = "token.actions.githubusercontent.com:aud"
+      values   = ["sts.amazonaws.com"]
+    }
+
+    condition {
+      test     = "StringLike"
+      variable = "token.actions.githubusercontent.com:sub"
+      # 使用通配符兼容所有仓库的新版 ID 格式
+      # repo:组织名@组织ID/仓库名@仓库ID:ref:refs/heads/*
+      values = [
+        "repo:pengchao2022@*/*:ref:refs/heads/*",
+        "repo:pengchao2022/*:ref:refs/heads/*"
+      ]
     }
   }
 }
