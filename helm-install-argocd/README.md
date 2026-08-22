@@ -150,6 +150,13 @@ kubectl rollout restart deployment argocd-server -n argocd
 
 ```
 
+- get the initial password for argocd
+
+```shell
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo
+
+```
+
 
 
 
