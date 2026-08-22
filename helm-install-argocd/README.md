@@ -77,12 +77,53 @@ spec:
               number: 80
 
 ```
-
+- Since Argocd use the HTTPS by default, You have to give on a patch if you don't have a TLS cert 
 - if you want allow HTTP to forward and HTTP open in browser when you don't have a TLS cert
 ```shell
 kubectl patch deployment argocd-server -n argocd --type json -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--insecure"}]'
 
 ```
+- If you have a TLS cert from AWS ACM then use it on alb-ingress.yaml and you will have a HTTPS access
+
+```shell
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: argocd-server-ingress
+  namespace: argocd
+  annotations:
+    kubernetes.io/ingress.class: "alb"
+    alb.ingress.kubernetes.io/scheme: "internet-facing"
+    alb.ingress.kubernetes.io/target-type: "ip"
+    # 1. 监听 443 端口并启用 HTTPS
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}, {"HTTP": 80}]'
+    # 2. 绑定你在 AWS ACM 中的证书 ARN（必填）
+    alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:region:account-id:certificate/your-cert-id"
+    # 3. （可选）如果想把 HTTP 自动重定向到 HTTPS
+    alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
+    
+    alb.ingress.kubernetes.io/backend-protocol: "HTTP"
+    alb.ingress.kubernetes.io/target-group-attributes: stickiness.enabled=true,stickiness.lb_cookie.duration_seconds=86400
+    alb.ingress.kubernetes.io/healthcheck-path: "/healthz"
+    alb.ingress.kubernetes.io/healthcheck-protocol: "HTTP"
+spec:
+  ingressClassName: alb
+  rules:
+  - host: argocd.example.com  
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: argocd-server
+            port:
+              number: 80
+
+```
+
+
+
 
 - create the ingress for argo-cd
 ```shell
